@@ -316,6 +316,7 @@
     }catch(err){
       if(err&&err.code==="precisa_toque"){ marcar("Toque para preparar o vídeo","wait",{label:"Preparar",fn:function(){A.prepararAudio(); enviarUm(f,dados,marcar)}}); return }
       var msg=(err&&MSG[err.code])||(err&&err.message)||"Falhou, tente de novo";
+      if(/client token/i.test(msg)){ var pb=await problemaConfig(); msg=pb||"O servidor recusou o envio. Tente de novo em instantes." }
       if(/c[oó]digo/i.test(msg)){ $("inCodigo").hidden=false; $("inCodigo").focus() }
       marcar(msg,"err",{label:"Tentar de novo",fn:function(){A.prepararAudio(); dados.codigo=$("inCodigo").value.trim(); enviarUm(f,dados,marcar)}});
     }
@@ -336,6 +337,16 @@
   drop.addEventListener("drop",function(e){A.prepararAudio();var fs=Array.from((e.dataTransfer&&e.dataTransfer.files)||[]);if(fs.length)enviar(fs)});
   addEventListener("beforeunload",function(e){ if($("fila").querySelector(".st.wait")){ e.preventDefault(); e.returnValue="" } });
 
+  // quando algo está mal configurado na Vercel, explica o que falta
+  async function problemaConfig(){
+    try{
+      var d=await A.api("/api/diagnostico"); if(d.tudoCerto) return "";
+      var p=[d.armazenamentoFotos,d.bancoDeDados,d.senhaAdmin].filter(function(x){return String(x).indexOf("ok")!==0});
+      var txt="Configuração incompleta na Vercel: "+p.join(" · ");
+      $("vazioTxt").textContent=txt; return txt;
+    }catch(e){ return "" }
+  }
+
   /* ---------- dados do servidor ---------- */
   var primeira=true;
   async function atualizar(){
@@ -347,7 +358,7 @@
       aplicar(); renderMural(); if(!$("lb").hidden) mostrar();
       if(primeira){ primeira=false; if(cfg.confete) A.confete(); else { var cv=$("confete"); if(cv) cv.remove() } }
     }catch(e){
-      if(primeira){ $("vazioTxt").textContent="Não foi possível carregar o álbum agora. Recarregue a página." }
+      if(primeira){ $("vazioTxt").textContent="Não foi possível carregar o álbum: "+e.message; problemaConfig() }
     }
   }
   atualizar();

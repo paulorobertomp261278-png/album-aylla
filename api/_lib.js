@@ -2,8 +2,31 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 
 // ---------- Redis (Upstash) via REST, sem dependências ----------
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+// A Vercel pode criar as variáveis com prefixos diferentes; procuramos por qualquer um deles.
+function acharEnv(exatos, fimRegex, filtroValor) {
+  for (const k of exatos) if (process.env[k]) return { nome: k, valor: process.env[k] };
+  for (const [k, v] of Object.entries(process.env)) {
+    if (v && fimRegex.test(k) && (!filtroValor || filtroValor(v))) return { nome: k, valor: v };
+  }
+  return null;
+}
+export function envRedis() {
+  const url = acharEnv(["UPSTASH_REDIS_REST_URL", "KV_REST_API_URL"], /(_KV_REST_API_URL|_REDIS_REST_URL|_REST_API_URL)$/, (v) => /^https:\/\//.test(v));
+  let token = null;
+  if (url) {
+    const base = url.nome.replace(/_URL$/, "_TOKEN");
+    if (process.env[base]) token = { nome: base, valor: process.env[base] };
+  }
+  if (!token) token = acharEnv(["UPSTASH_REDIS_REST_TOKEN", "KV_REST_API_TOKEN"], /(_KV_REST_API_TOKEN|_REDIS_REST_TOKEN|_REST_API_TOKEN)$/);
+  return { url, token };
+}
+export function tokenBlob() {
+  const t = acharEnv(["BLOB_READ_WRITE_TOKEN"], /_READ_WRITE_TOKEN$/, (v) => v.startsWith("vercel_blob_rw_"));
+  return t ? t.valor : undefined;
+}
+const R = envRedis();
+const REDIS_URL = R.url && R.url.valor;
+const REDIS_TOKEN = R.token && R.token.valor;
 
 export async function redis(...comandos) {
   if (!REDIS_URL || !REDIS_TOKEN) throw new ErroApp(500, "Banco de dados não configurado. Conecte o Upstash Redis ao projeto na Vercel.");

@@ -1,6 +1,6 @@
 // Salvar as configurações do painel admin
 import { del } from "@vercel/blob";
-import { rota, json, redis, ErroApp, exigirAdmin, limparConfig, lerConfig, urlDoBlob } from "./_lib.js";
+import { rota, json, redis, ErroApp, exigirAdmin, limparConfig, lerConfig, urlDoBlob , tokenBlob } from "./_lib.js";
 
 const handler = rota({
   PUT: async (request) => {
@@ -11,7 +11,7 @@ const handler = rota({
     const cfg = limparConfig(b);
     await redis(["SET", "config", JSON.stringify(cfg)], ["INCR", "versao"]);
     // se a imagem do topo foi trocada, apaga a antiga
-    if (urlDoBlob(antes.imagem) && antes.imagem !== cfg.imagem) { try { await del(antes.imagem); } catch {} }
+    if (urlDoBlob(antes.imagem) && antes.imagem !== cfg.imagem) { try { await del(antes.imagem, { token: tokenBlob() }); } catch {} }
     return json({ ok: true, config: cfg });
   },
 });
