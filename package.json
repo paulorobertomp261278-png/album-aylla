@@ -1,0 +1,17 @@
+{
+  "name": "album-aniversario",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/blob-client.js --bundle --minify --format=iife --platform=browser --outfile=public/blob-client.js"
+  },
+  "dependencies": {
+    "@vercel/blob": "latest"
+  },
+  "devDependencies": {
+    "esbuild": "latest"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

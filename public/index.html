@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Álbum da Aylla</title>
+<meta name="description" content="Álbum de fotos e vídeos da festa de aniversário">
+<meta name="theme-color" content="#fff0f5">
+<link rel="icon" href="/chocalho.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/estilo.css">
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><pattern id="bolinhas" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="var(--accent)"/><circle cx="4.5" cy="4.5" r="1.9" fill="#fff"/></pattern></defs>
+  <symbol id="laco" viewBox="0 0 64 40">
+    <path d="M32 20 C22 4 4 2 3 12 C2 22 8 36 32 20Z" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M32 20 C42 4 60 2 61 12 C62 22 56 36 32 20Z" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="26" y="13" width="12" height="14" rx="5" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2"/>
+  </symbol>
+</svg>
+<canvas id="confete" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="flags" aria-hidden="true" id="flags"></div>
+
+  <header class="hero">
+    <div class="hero-txt">
+    <div class="eyebrow" id="sobreTitulo">Álbum da festa</div>
+    <h1 id="titulo">Aylla <span class="age">faz 1 ano!</span></h1>
+    <p class="sub" id="subtitulo">Tirou uma foto ou gravou um vídeo na festa? Coloque aqui para todo mundo ver.</p>
+    <div class="meta">
+      <span class="chip" id="cFotos">0 fotos</span>
+      <span class="chip" id="cVideos">0 vídeos</span>
+      <span class="chip" id="cData" hidden></span>
+    </div>
+    </div>
+    <div class="deco" id="deco" aria-hidden="true">
+      <svg class="baloes" viewBox="0 0 120 150">
+        <path d="M30 62 Q34 100 58 146" stroke="var(--muted)" stroke-width="1.5" fill="none"/>
+        <path d="M84 56 Q78 100 60 146" stroke="var(--muted)" stroke-width="1.5" fill="none"/>
+        <path d="M58 70 Q60 110 59 146" stroke="var(--muted)" stroke-width="1.5" fill="none"/>
+        <ellipse cx="30" cy="34" rx="22" ry="27" fill="var(--coral)"/><path d="M26 60 l4 5 l4 -5z" fill="var(--coral)"/>
+        <ellipse cx="84" cy="30" rx="22" ry="27" fill="var(--sun)"/><path d="M80 56 l4 5 l4 -5z" fill="var(--sun)"/>
+        <ellipse cx="58" cy="44" rx="22" ry="27" fill="var(--accent)"/><path d="M54 70 l4 5 l4 -5z" fill="var(--accent)"/>
+        <ellipse cx="22" cy="24" rx="5" ry="8" fill="#fff" opacity=".45"/><ellipse cx="76" cy="20" rx="5" ry="8" fill="#fff" opacity=".45"/><ellipse cx="50" cy="34" rx="5" ry="8" fill="#fff" opacity=".45"/>
+      </svg>
+      <span class="um" id="numero">1</span>
+      <img class="hero-img" id="heroImg" src="chocalho.png" alt="" width="360" height="498">
+    </div>
+  </header>
+
+  <section id="envio">
+    <div class="drop" id="drop">
+      <div class="cam" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3b2230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      </div>
+      <div>
+        <h2 id="tituloEnvio">Adicionar fotos e vídeos</h2>
+        <p>Escolha vários de uma vez ou arraste para cá. Fotos e vídeos de qualquer tamanho: vídeos grandes são preparados no seu aparelho antes de enviar, então deixe a página aberta até terminar.</p>
+      </div>
+      <button class="btn" id="btnEscolher">Escolher arquivos</button>
+      <div class="legenda campos-envio">
+        <input id="inNome" maxlength="40" placeholder="Seu nome" autocomplete="name" aria-label="Seu nome">
+        <input id="inLegenda" maxlength="120" placeholder="Legenda (opcional), ex.: Hora do parabéns!" aria-label="Legenda">
+        <input id="inCodigo" maxlength="40" placeholder="Código da festa" aria-label="Código da festa" hidden>
+      </div>
+      <input type="file" id="inArquivos" accept="image/*,video/*" multiple hidden>
+    </div>
+    <div class="queue" id="fila"></div>
+  </section>
+  <div class="encerrado" id="encerrado" hidden>O envio de fotos e vídeos foi encerrado. Obrigado a todos que participaram!</div>
+
+  <div class="bar">
+    <h2><svg class="laco" id="lacoMural" aria-hidden="true"><use href="#laco"/></svg><span id="tituloMural">Mural</span></h2>
+    <div class="tabs" role="group" aria-label="Filtrar">
+      <button data-f="todos" aria-pressed="true">Tudo</button>
+      <button data-f="foto" aria-pressed="false">Fotos</button>
+      <button data-f="video" aria-pressed="false">Vídeos</button>
+    </div>
+  </div>
+
+  <div class="wall" id="mural"></div>
+  <div class="empty" id="vazio">
+    <div class="lacos" id="lacosVazio" aria-hidden="true"><svg class="laco"><use href="#laco"/></svg><svg class="laco"><use href="#laco"/></svg><svg class="laco"><use href="#laco"/></svg></div>
+    <div class="big" id="vazioTitulo">O mural está esperando!</div>
+    <p id="vazioTxt">As fotos e vídeos que os convidados enviarem aparecem aqui, das mais novas para as mais antigas.</p>
+  </div>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <div class="top"><button class="lbtn" id="lbFechar" aria-label="Fechar">×</button></div>
+  <div class="stage" id="lbStage"></div>
+  <div class="foot">
+    <button class="lbtn" id="lbAnt" aria-label="Anterior">‹</button>
+    <div class="txt" id="lbTxt"></div>
+    <button class="lbtn" id="lbProx" aria-label="Próxima">›</button>
+  </div>
+</div>
+
+
+
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/blob-client.js" defer></script>
+<script src="/comum.js"></script>
+<script>
+(function(){
+  var A=window.Album, $=A.$;
+  var flags=$("flags"); for(var i=0;i<40;i++) flags.appendChild(document.createElement("span"));
+
+  var PADRAO_ENC="O envio de fotos e vídeos foi encerrado. Obrigado a todos que participaram!";
+  var cfg=null, itens=[], versao=null, filtro="todos", precisaCodigo=false, meuHash="";
+  var editando=null, textoEdit="";
+
+  // chave pessoal do convidado: permite apagar/editar só o que ele mesmo enviou
+  var chave=A.ler("album_chave");
+  if(!chave){ chave=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(b){return b.toString(16).padStart(2,"0")}).join(""); A.guardar("album_chave",chave) }
+  A.sha256(chave).then(function(h){meuHash=h;renderMural()});
+  $("inNome").value=A.ler("album_nome")||"";
+  $("inNome").addEventListener("change",function(){A.guardar("album_nome",$("inNome").value.trim())});
+  $("inCodigo").value=A.ler("album_codigo")||"";
+  $("inCodigo").addEventListener("change",function(){A.guardar("album_codigo",$("inCodigo").value.trim())});
+
+  function contraste(hex){var r=parseInt(hex.substr(1,2),16),g=parseInt(hex.substr(3,2),16),b=parseInt(hex.substr(5,2),16);return (0.299*r+0.587*g+0.114*b)>160?"#2a0c19":"#ffffff"}
+
+  /* ---------- aparência ---------- */
+  function aplicar(){
+    if(!cfg) return;
+    var c=cfg, root=document.documentElement.style, h=$("titulo"); h.textContent="";
+    if(c.tituloLivre.trim()) h.textContent=c.tituloLivre.trim();
+    else if(c.idade!==""){
+      h.append((c.nome.trim()||"Aniversariante")+" ");
+      var s=document.createElement("span"); s.className="age"; s.textContent="faz "+c.idade+(Number(c.idade)===1?" ano!":" anos!"); h.append(s);
+    } else {
+      h.append("Aniversário ");
+      var s2=document.createElement("span"); s2.className="age"; s2.textContent=c.nome.trim()||"da aniversariante"; h.append(s2);
+    }
+    document.title="Álbum da "+(c.nome.trim()||"festa");
+    $("sobreTitulo").textContent=c.sobreTitulo; $("sobreTitulo").hidden=!c.sobreTitulo.trim();
+    $("subtitulo").textContent=c.subtitulo; $("subtitulo").hidden=!c.subtitulo.trim();
+    $("tituloEnvio").textContent=c.tituloEnvio||"Adicionar fotos e vídeos";
+    $("tituloMural").textContent=c.tituloMural||"Mural";
+    $("vazioTitulo").textContent=c.vazioTitulo; $("vazioTitulo").hidden=!c.vazioTitulo.trim();
+    $("encerrado").textContent=c.textoEncerrado||PADRAO_ENC;
+    if(c.data){var p=c.data.split("-"); $("cData").textContent="Festa em "+p[2]+"/"+p[1]+"/"+p[0]; $("cData").hidden=false} else $("cData").hidden=true;
+    if(c.corPrincipal){root.setProperty("--accent",c.corPrincipal);root.setProperty("--sky",c.corPrincipal);root.setProperty("--accent-ink",contraste(c.corPrincipal))}
+    else{root.removeProperty("--accent");root.removeProperty("--sky");root.removeProperty("--accent-ink")}
+    if(c.corBalao1) root.setProperty("--coral",c.corBalao1); else root.removeProperty("--coral");
+    if(c.corBalao2) root.setProperty("--sun",c.corBalao2); else root.removeProperty("--sun");
+    var img=$("heroImg");
+    if(c.imagem==="nenhuma") img.hidden=true;
+    else { img.hidden=false; var src=c.imagem==="padrao"?"/chocalho.png":c.imagem; if(img.getAttribute("src")!==src) img.src=src; }
+    $("numero").textContent=c.idade===""?"":String(c.idade);
+    $("numero").hidden=!c.numero||c.idade==="";
+    document.querySelector(".baloes").style.display=c.baloes?"":"none";
+    var deco=$("deco");
+    deco.classList.toggle("sem-img",c.imagem==="nenhuma");
+    deco.classList.toggle("dois",String(c.idade).length>1);
+    deco.hidden=!c.baloes&&$("numero").hidden&&c.imagem==="nenhuma";
+    $("flags").hidden=!c.bandeirinhas;
+    $("lacoMural").style.display=c.lacos?"":"none";
+    $("lacosVazio").hidden=!c.lacos;
+    $("envio").hidden=!c.envioAberto;
+    $("encerrado").hidden=c.envioAberto;
+    $("inCodigo").hidden=!precisaCodigo;
+  }
+
+  /* ---------- mural ---------- */
+  function ordenados(){var l=itens.slice(); if(cfg&&cfg.ordem==="antigas") l.reverse(); return l}
+  function visiveis(){return ordenados().filter(function(it){return filtro==="todos"||it.tipo===filtro})}
+  function linhaAutor(it){ var q=A.quando(it.criadoEm); return cfg&&cfg.mostrarAutor&&it.autor?it.autor+" · "+q:q }
+  function meu(it){return !!meuHash&&it.dono===meuHash}
+
+  function renderMural(){
+    var c=cfg||{}, nf=0,nv=0; itens.forEach(function(it){it.tipo==="video"?nv++:nf++});
+    $("cFotos").textContent=nf+(nf===1?" foto":" fotos");
+    $("cVideos").textContent=nv+(nv===1?" vídeo":" vídeos");
+    var lista=visiveis(), mural=$("mural"); mural.textContent="";
+    $("vazio").hidden=lista.length>0;
+    $("vazioTxt").textContent=(itens.length&&!lista.length)?"Nada nesse filtro ainda.":(c.textoVazio||"");
+    lista.forEach(function(it,idx){
+      var fig=document.createElement("figure"); fig.className="pola";
+      fig.style.setProperty("--r",((Math.abs(A.hash(it.id))%7)-3)*0.7+"deg");
+      if(idx%3===0){var tp=document.createElement("div");tp.className="tape";fig.appendChild(tp)}
+      else if(idx%3===2&&c.lacos!==false){var ns="http://www.w3.org/2000/svg",sv=document.createElementNS(ns,"svg"),us=document.createElementNS(ns,"use");us.setAttribute("href","#laco");sv.setAttribute("class","laco-pin");sv.setAttribute("aria-hidden","true");sv.appendChild(us);fig.appendChild(sv)}
+      var b=document.createElement("button"); b.className="media"; b.setAttribute("aria-label","Ampliar");
+      if(it.miniatura){var im=document.createElement("img"); im.src=it.miniatura; im.loading="lazy"; im.alt=it.legenda||(it.tipo==="video"?"Vídeo da festa":"Foto da festa"); b.appendChild(im)}
+      else if(it.tipo==="video"){var v=document.createElement("video"); v.src=it.url+"#t=0.1"; v.preload="metadata"; v.muted=true; v.playsInline=true; b.appendChild(v)}
+      else {var im2=document.createElement("img"); im2.src=it.url; im2.loading="lazy"; im2.alt=it.legenda||"Foto da festa"; b.appendChild(im2)}
+      if(it.tipo==="video"){var pl=document.createElement("span"); pl.className="play"; pl.textContent="▶ Vídeo"; b.appendChild(pl)}
+      b.onclick=function(){abrir(idx)};
+      fig.appendChild(b);
+      var cap=document.createElement("figcaption");
+      if(editando===it.id){
+        var box=document.createElement("div"); box.className="edit-cap";
+        var inp=document.createElement("input"); inp.maxLength=120; inp.value=textoEdit; inp.id="leg-"+it.id; inp.setAttribute("aria-label","Legenda");
+        inp.oninput=function(){textoEdit=inp.value};
+        var ac=document.createElement("div"); ac.className="confirm";
+        var ok=document.createElement("button"); ok.className="yes"; ok.textContent="Salvar";
+        var no=document.createElement("button"); no.textContent="Cancelar";
+        no.onclick=function(){editando=null;renderMural()};
+        ok.onclick=async function(){
+          ok.disabled=true;
+          try{ await A.api("/api/midia",{metodo:"PATCH",corpo:{id:it.id,legenda:textoEdit.trim(),chave:chave}}); it.legenda=textoEdit.trim(); editando=null; A.toast("Legenda salva"); renderMural(); atualizar() }
+          catch(e){ ok.disabled=false; A.toast(e.message) }
+        };
+        inp.onkeydown=function(e){if(e.key==="Enter")ok.click(); if(e.key==="Escape")no.click()};
+        ac.append(ok,no); box.append(inp,ac); cap.appendChild(box);
+        setTimeout(function(){var el=$("leg-"+it.id); if(el&&document.activeElement!==el) el.focus()},0);
+      } else if(it.legenda){var cc=document.createElement("div");cc.className="cap";cc.textContent=it.legenda;cap.appendChild(cc)}
+      var by=document.createElement("div"); by.className="by";
+      var q=document.createElement("span"); q.textContent=linhaAutor(it); by.appendChild(q);
+      if(meu(it)&&editando!==it.id){
+        var acoes=document.createElement("span"); acoes.className="acoes";
+        var ed=document.createElement("button"); ed.className="del"; ed.textContent="Legenda";
+        ed.onclick=function(){editando=it.id;textoEdit=it.legenda;renderMural()};
+        var d=document.createElement("button"); d.className="del"; d.textContent="Apagar";
+        d.onclick=function(){confirmar(cap,it)};
+        acoes.append(ed,d); by.appendChild(acoes);
+      }
+      cap.appendChild(by); fig.appendChild(cap); mural.appendChild(fig);
+    });
+  }
+  function confirmar(cap,it){
+    if(cap.querySelector(".confirm")) return;
+    var box=document.createElement("div"); box.className="confirm"; box.append("Apagar do álbum?");
+    var sim=document.createElement("button"); sim.className="yes"; sim.textContent="Apagar";
+    var nao=document.createElement("button"); nao.textContent="Cancelar";
+    nao.onclick=function(){box.remove()};
+    sim.onclick=async function(){
+      sim.disabled=true;
+      try{ await A.api("/api/midia",{metodo:"DELETE",corpo:{id:it.id,chave:chave}}); itens=itens.filter(function(x){return x.id!==it.id}); renderMural(); A.toast("Apagado"); atualizar() }
+      catch(e){ A.toast(e.message); sim.disabled=false }
+    };
+    box.append(sim,nao); cap.appendChild(box);
+  }
+  document.querySelectorAll(".tabs button").forEach(function(b){
+    b.onclick=function(){filtro=b.dataset.f;document.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});renderMural()};
+  });
+
+  /* ---------- foto ampliada ---------- */
+  var atual=0;
+  function abrir(i){atual=i;mostrar();$("lb").hidden=false;$("lbFechar").focus()}
+  function fechar(){$("lb").hidden=true;$("lbStage").textContent=""}
+  function mostrar(){
+    var lista=visiveis(); if(!lista.length) return fechar();
+    atual=(atual+lista.length)%lista.length; var it=lista[atual], st=$("lbStage"); st.textContent="";
+    if(it.tipo==="video"){var v=document.createElement("video"); v.src=it.url; v.controls=true; v.playsInline=true; if(it.miniatura) v.poster=it.miniatura; st.appendChild(v)}
+    else{var im=document.createElement("img"); im.src=it.url; im.alt=it.legenda||"Foto da festa"; st.appendChild(im)}
+    var t=$("lbTxt"); t.textContent=it.legenda||"";
+    var sm=document.createElement("small"); sm.textContent=(cfg&&cfg.mostrarAutor&&it.autor?it.autor+" · ":"")+(atual+1)+" de "+lista.length; t.appendChild(sm);
+  }
+  $("lbFechar").onclick=fechar;
+  $("lbAnt").onclick=function(){atual--;mostrar()};
+  $("lbProx").onclick=function(){atual++;mostrar()};
+  document.addEventListener("keydown",function(e){
+    if($("lb").hidden) return;
+    if(e.key==="Escape")fechar(); else if(e.key==="ArrowLeft"){atual--;mostrar()} else if(e.key==="ArrowRight"){atual++;mostrar()}
+  });
+  var tx=null;
+  $("lbStage").addEventListener("touchstart",function(e){tx=e.touches[0].clientX},{passive:true});
+  $("lbStage").addEventListener("touchend",function(e){if(tx===null)return;var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50){atual+=dx<0?1:-1;mostrar()}tx=null});
+
+  /* ---------- envio ---------- */
+  function linhaFila(nome){
+    var el=document.createElement("div"); el.className="qitem";
+    var n=document.createElement("span"); n.className="name"; n.textContent=nome;
+    var s=document.createElement("span"); s.className="st wait"; s.textContent="Na fila…";
+    var bt=document.createElement("button"); bt.className="btn sm"; bt.hidden=true;
+    var pg=document.createElement("div"); pg.className="bar-prog"; pg.hidden=true; var pgs=document.createElement("span"); pg.appendChild(pgs);
+    el.append(n,s,bt,pg); $("fila").append(el);
+    return function(txt,cls,acao,pct){
+      s.textContent=txt; s.className="st "+cls;
+      if(acao){bt.textContent=acao.label; bt.hidden=false; bt.onclick=function(){bt.hidden=true; acao.fn()}} else bt.hidden=true;
+      if(typeof pct==="number"){pg.hidden=false; pgs.style.width=pct+"%"} else pg.hidden=true;
+      if(cls==="ok") setTimeout(function(){el.remove()},4000);
+    };
+  }
+  var MSG={nao_decodifica:"Este aparelho não conseguiu abrir o vídeo. Tente de outro celular ou do computador",sem_suporte:"Este navegador não consegue preparar vídeos grandes. Tente pelo Chrome ou pelo computador"};
+  var FOTOS=["image/jpeg","image/png","image/webp","image/gif"], VIDEOS=["video/mp4","video/webm"];
+
+  async function enviarUm(f,dados,marcar){
+    var ehFoto=f.type.indexOf("image/")===0, ehVideo=f.type.indexOf("video/")===0;
+    if(!ehFoto&&!ehVideo){ marcar("Formato não aceito","err"); return }
+    var payload={codigo:dados.codigo};
+    try{
+      var principal, mini=null, tipo;
+      if(ehFoto){
+        marcar("Preparando…","wait");
+        principal=await A.reduzir(f,2000,0.82);
+        if(!principal||FOTOS.indexOf(principal.type)<0){ marcar("Formato de foto não aceito (use JPG ou PNG)","err"); return }
+        mini=await A.reduzir(f,480,0.7); tipo="foto";
+      } else {
+        tipo="video";
+        var direto=VIDEOS.indexOf(f.type)>=0&&f.size<=15*1024*1024;
+        if(!direto&&A.escolherMime()){
+          marcar("Preparando vídeo… 0% · deixe esta página aberta","wait",null,0);
+          var r=await A.comprimirVideo(f,function(p){marcar("Preparando vídeo… "+p+"% · deixe esta página aberta","wait",null,p)});
+          principal=r.video; mini=r.capa;
+        } else {
+          if(!direto&&VIDEOS.indexOf(f.type)<0&&f.type!=="video/quicktime"){ marcar(MSG.sem_suporte,"err"); return }
+          principal=f; mini=await A.capaDeVideo(f);
+        }
+      }
+      marcar("Enviando "+A.mb(principal.size)+"…","wait",null,0);
+      var url=await A.enviarBlob(principal,"midia",f.name,payload,function(p){marcar("Enviando "+A.mb(principal.size)+"… "+p+"%","wait",null,p)});
+      var urlMini="";
+      if(mini){ try{ urlMini=await A.enviarBlob(mini,"capas",f.name,payload) }catch(e){} }
+      await A.api("/api/midia",{metodo:"POST",corpo:{tipo:tipo,url:url,miniatura:urlMini,legenda:dados.legenda,autor:dados.autor,chave:chave,codigo:dados.codigo,bytes:principal.size+(mini?mini.size:0)}});
+      marcar("Enviado","ok"); atualizar();
+    }catch(err){
+      if(err&&err.code==="precisa_toque"){ marcar("Toque para preparar o vídeo","wait",{label:"Preparar",fn:function(){A.prepararAudio(); enviarUm(f,dados,marcar)}}); return }
+      var msg=(err&&MSG[err.code])||(err&&err.message)||"Falhou, tente de novo";
+      if(/c[oó]digo/i.test(msg)){ $("inCodigo").hidden=false; $("inCodigo").focus() }
+      marcar(msg,"err",{label:"Tentar de novo",fn:function(){A.prepararAudio(); dados.codigo=$("inCodigo").value.trim(); enviarUm(f,dados,marcar)}});
+    }
+  }
+  var fila=Promise.resolve();
+  function enviar(files){
+    if(precisaCodigo&&!$("inCodigo").value.trim()){ $("inCodigo").hidden=false; $("inCodigo").focus(); A.toast("Digite o código da festa antes de enviar."); return }
+    var dados={legenda:$("inLegenda").value.trim().slice(0,120),autor:$("inNome").value.trim().slice(0,40),codigo:$("inCodigo").value.trim()};
+    A.guardar("album_nome",dados.autor); A.guardar("album_codigo",dados.codigo);
+    $("inLegenda").value="";
+    files.forEach(function(f){ var m=linhaFila(f.name); fila=fila.then(function(){return enviarUm(f,dados,m)}) });
+  }
+  $("btnEscolher").onclick=function(){A.prepararAudio();$("inArquivos").click()};
+  $("inArquivos").onchange=function(e){A.prepararAudio();var fs=Array.from(e.target.files||[]);e.target.value="";if(fs.length)enviar(fs)};
+  var drop=$("drop");
+  ["dragenter","dragover"].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.add("over")})});
+  ["dragleave","drop"].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.remove("over")})});
+  drop.addEventListener("drop",function(e){A.prepararAudio();var fs=Array.from((e.dataTransfer&&e.dataTransfer.files)||[]);if(fs.length)enviar(fs)});
+  addEventListener("beforeunload",function(e){ if($("fila").querySelector(".st.wait")){ e.preventDefault(); e.returnValue="" } });
+
+  /* ---------- dados do servidor ---------- */
+  var primeira=true;
+  async function atualizar(){
+    try{
+      var d=await A.api("/api/estado"+(versao!==null?"?v="+encodeURIComponent(versao):""));
+      if(d.igual) return;
+      versao=d.versao; cfg=d.config; precisaCodigo=!!d.precisaCodigo; itens=Array.isArray(d.itens)?d.itens:[];
+      if(editando&&!itens.some(function(x){return x.id===editando})) editando=null;
+      aplicar(); renderMural(); if(!$("lb").hidden) mostrar();
+      if(primeira){ primeira=false; if(cfg.confete) A.confete(); else { var cv=$("confete"); if(cv) cv.remove() } }
+    }catch(e){
+      if(primeira){ $("vazioTxt").textContent="Não foi possível carregar o álbum agora. Recarregue a página." }
+    }
+  }
+  atualizar();
+  setInterval(function(){ if(document.visibilityState==="visible"&&editando===null) atualizar() },20000);
+  document.addEventListener("visibilitychange",function(){ if(document.visibilityState==="visible") atualizar() });
+})();
+</script>
+</body>
+</html>

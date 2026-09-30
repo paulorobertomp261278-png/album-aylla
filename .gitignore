@@ -1,0 +1,4 @@
+node_modules
+public/blob-client.js
+.vercel
+.env*

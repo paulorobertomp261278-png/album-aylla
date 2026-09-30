@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel do Álbum</title>
+<link rel="icon" href="/chocalho.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/estilo.css">
+<style>
+.login{max-width:380px;margin:12vh auto 0;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;display:grid;gap:14px;box-shadow:var(--shadow)}
+.login h1{font-size:30px}
+.login p{margin:0;color:var(--muted)}
+.login input{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;width:100%}
+.erro{color:var(--accent);font-weight:700;margin:0}
+.fora{padding-inline:16px}
+.ph .acoes-topo{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ph a.btn{text-decoration:none;display:inline-block}
+.mods{display:grid;gap:10px}
+.mod{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px}
+.mod .thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;background:var(--line);display:block}
+.mod .info{display:grid;gap:4px;min-width:0}
+.mod .info small{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mod .info input{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 8px;width:100%;min-width:0;font-size:14px}
+.mod .lado{display:grid;gap:6px;justify-items:end}
+.mod .badge{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.nota{font-size:13px;color:var(--muted);margin:0}
+.toast{bottom:calc(env(safe-area-inset-bottom,0px) + 84px)}
+</style>
+</head>
+<body>
+<div class="fora" id="telaLogin">
+  <form class="login" id="formLogin">
+    <h1>Painel admin</h1>
+    <p>Digite a senha de admin do álbum.</p>
+    <label class="campo" for="senha">Senha<input id="senha" type="password" autocomplete="current-password" required></label>
+    <p class="erro" id="erroLogin" hidden></p>
+    <button class="btn" type="submit" id="entrar">Entrar</button>
+  </form>
+</div>
+
+<aside class="painel" id="painel" hidden aria-labelledby="painelTitulo">
+  <div class="ph">
+    <div><h2 id="painelTitulo">Painel admin</h2><p>Só quem tem a senha vê esta página.</p></div>
+    <div class="acoes-topo"><a class="btn ghost sm" href="/" target="_blank" rel="noopener">Abrir álbum</a><button class="btn ghost sm" type="button" id="sair">Sair</button></div>
+  </div>
+  <form class="pb" id="formPainel" autocomplete="off">
+    <fieldset class="grupo"><legend>Aniversariante</legend>
+      <div class="duas">
+        <label class="campo" for="pNome">Nome<input id="pNome" data-k="nome" maxlength="40"></label>
+        <label class="campo" for="pIdade">Idade<input id="pIdade" data-k="idade" type="number" min="0" max="120"></label>
+      </div>
+      <label class="campo" for="pData">Data da festa<input id="pData" data-k="data" type="date"></label>
+      <label class="campo" for="pTituloLivre">Título personalizado<small>Deixe vazio para usar "Nome faz N anos!"</small><input id="pTituloLivre" data-k="tituloLivre" maxlength="70"></label>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Textos da página</legend>
+      <label class="campo" for="pSobre">Texto acima do título<input id="pSobre" data-k="sobreTitulo" maxlength="40"></label>
+      <label class="campo" for="pSub">Frase de boas-vindas<textarea id="pSub" data-k="subtitulo" maxlength="240"></textarea></label>
+      <label class="campo" for="pTEnvio">Título da área de envio<input id="pTEnvio" data-k="tituloEnvio" maxlength="50"></label>
+      <label class="campo" for="pTMural">Título do mural<input id="pTMural" data-k="tituloMural" maxlength="40"></label>
+      <label class="campo" for="pVazioT">Mural vazio: título<input id="pVazioT" data-k="vazioTitulo" maxlength="60"></label>
+      <label class="campo" for="pVazio">Mural vazio: texto<textarea id="pVazio" data-k="textoVazio" maxlength="240"></textarea></label>
+      <label class="campo" for="pEnc">Aviso de envio encerrado<textarea id="pEnc" data-k="textoEncerrado" maxlength="240"></textarea></label>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Cores</legend>
+      <div class="cores">
+        <label class="cor" for="pCor1">Principal<input id="pCor1" type="color" data-k="corPrincipal"></label>
+        <label class="cor" for="pCor2">Balão rosa<input id="pCor2" type="color" data-k="corBalao1"></label>
+        <label class="cor" for="pCor3">Balão amarelo<input id="pCor3" type="color" data-k="corBalao2"></label>
+      </div>
+      <button class="btn ghost sm" type="button" id="corPadrao">Voltar às cores originais</button>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Imagem do topo</legend>
+      <div class="opcoes" role="radiogroup" aria-label="Imagem do topo">
+        <label><input type="radio" name="img" value="padrao">Chocalho</label>
+        <label><input type="radio" name="img" value="nenhuma">Nenhuma</label>
+        <label id="imgPropriaOp" hidden><input type="radio" name="img" value="propria">Imagem enviada</label>
+      </div>
+      <div class="miniatura"><img id="pImgMini" alt="" src="/chocalho.png"><button class="btn ghost sm" type="button" id="trocarImg">Enviar outra imagem</button></div>
+      <input type="file" id="pImgArquivo" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Enfeites</legend>
+      <label class="chave" for="pConfete">Confete ao abrir a página<input id="pConfete" type="checkbox" data-k="confete"></label>
+      <label class="chave" for="pBaloes">Balões<input id="pBaloes" type="checkbox" data-k="baloes"></label>
+      <label class="chave" for="pNumero">Número grande da idade<input id="pNumero" type="checkbox" data-k="numero"></label>
+      <label class="chave" for="pLacos">Laços de bolinhas<input id="pLacos" type="checkbox" data-k="lacos"></label>
+      <label class="chave" for="pBand">Bandeirinhas<input id="pBand" type="checkbox" data-k="bandeirinhas"></label>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Álbum</legend>
+      <label class="chave" for="pAberto">Convidados podem enviar fotos<input id="pAberto" type="checkbox" data-k="envioAberto"></label>
+      <label class="chave" for="pAutor">Mostrar quem enviou cada foto<input id="pAutor" type="checkbox" data-k="mostrarAutor"></label>
+      <div class="campo">Ordem do mural
+        <div class="opcoes">
+          <label><input type="radio" name="ordem" value="novas">Mais novas primeiro</label>
+          <label><input type="radio" name="ordem" value="antigas">Mais antigas primeiro</label>
+        </div>
+      </div>
+      <div class="campo">Espaço usado
+        <div class="medidor"><span id="espacoBarra"></span></div>
+        <small id="espacoTxt">Calculando…</small>
+      </div>
+      <p class="nota">O plano gratuito da Vercel inclui 1 GB de armazenamento e 10 GB de visualização por mês.</p>
+    </fieldset>
+
+    <fieldset class="grupo"><legend>Fotos e vídeos</legend>
+      <p class="nota" id="modInfo">Carregando…</p>
+      <div class="mods" id="mods"></div>
+    </fieldset>
+  </form>
+  <div class="pf"><span class="aviso" id="painelAviso">Sem alterações</span><button class="btn ghost sm" type="button" id="descartar">Descartar</button><button class="btn sm" type="button" id="salvar">Salvar</button></div>
+</aside>
+<div class="toast" id="toast" hidden></div>
+
+<script src="/blob-client.js" defer></script>
+<script src="/comum.js"></script>
+<script>
+(function(){
+  var A=window.Album, $=A.$;
+  var CORES_ORIG={corPrincipal:"#d9467e",corBalao1:"#f78fb3",corBalao2:"#ffe08a"};
+  var senha="", salvo=null, rascunho=null, itens=[], imgPropria="", bytes=0;
+  try{ senha=sessionStorage.getItem("album_admin")||"" }catch(e){}
+
+  /* ---------- login ---------- */
+  async function entrar(s){
+    await A.api("/api/admin",{metodo:"POST",corpo:{senha:s}});
+    senha=s; try{sessionStorage.setItem("album_admin",s)}catch(e){}
+    $("telaLogin").hidden=true; $("painel").hidden=false;
+    await carregar();
+  }
+  $("formLogin").addEventListener("submit",async function(e){
+    e.preventDefault(); $("erroLogin").hidden=true; $("entrar").disabled=true;
+    try{ await entrar($("senha").value) }catch(err){ $("erroLogin").textContent=err.message; $("erroLogin").hidden=false }
+    $("entrar").disabled=false;
+  });
+  $("sair").onclick=function(){ try{sessionStorage.removeItem("album_admin")}catch(e){} location.reload() };
+
+  /* ---------- dados ---------- */
+  async function carregar(){
+    var d=await A.api("/api/estado");
+    salvo=d.config; itens=d.itens||[]; bytes=d.bytes||0;
+    if(!rascunho) rascunho=JSON.parse(JSON.stringify(salvo));
+    preencher(); mudou(); espaco(); moderacao();
+  }
+  function espaco(){
+    var max=1073741824, pct=Math.round(bytes/max*100);
+    $("espacoBarra").style.width=Math.min(100,pct)+"%";
+    $("espacoTxt").textContent=A.mb(bytes)+" de 1 GB ("+pct+"%) · "+itens.length+(itens.length===1?" item":" itens");
+  }
+
+  /* ---------- formulário ---------- */
+  var campos=Array.from(document.querySelectorAll("#formPainel [data-k]"));
+  function preencher(){
+    var c=rascunho;
+    campos.forEach(function(el){
+      var k=el.dataset.k;
+      if(el.type==="checkbox") el.checked=!!c[k];
+      else if(el.type==="color") el.value=c[k]||CORES_ORIG[k];
+      else el.value=c[k]===undefined||c[k]===null?"":c[k];
+    });
+    var im=c.imagem==="padrao"||c.imagem==="nenhuma"?c.imagem:"propria";
+    if(im==="propria") imgPropria=c.imagem;
+    $("imgPropriaOp").hidden=!imgPropria;
+    document.querySelectorAll('input[name="img"]').forEach(function(r){r.checked=r.value===im});
+    document.querySelectorAll('input[name="ordem"]').forEach(function(r){r.checked=r.value===c.ordem});
+    $("pImgMini").src=im==="propria"?c.imagem:"/chocalho.png";
+    $("pImgMini").style.opacity=c.imagem==="nenhuma"?".35":"1";
+  }
+  function mudou(){
+    var dif=JSON.stringify(rascunho)!==JSON.stringify(salvo);
+    $("painelAviso").textContent=dif?"Alterações ainda não salvas":"Sem alterações";
+    $("salvar").disabled=!dif; $("descartar").disabled=!dif;
+  }
+  $("formPainel").addEventListener("submit",function(e){e.preventDefault()});
+  $("formPainel").addEventListener("input",function(e){
+    var el=e.target; if(!rascunho||el.closest(".mod")) return;
+    if(el.dataset.k){
+      var k=el.dataset.k;
+      rascunho[k]=el.type==="checkbox"?el.checked:(k==="idade"?(el.value===""?"":Math.max(0,Math.min(120,Math.round(Number(el.value))||0))):el.value);
+    } else if(el.name==="img"){
+      rascunho.imagem=el.value==="propria"?imgPropria:el.value; preencher();
+    } else if(el.name==="ordem"){ rascunho.ordem=el.value }
+    mudou();
+  });
+  $("corPadrao").onclick=function(){rascunho.corPrincipal="";rascunho.corBalao1="";rascunho.corBalao2="";preencher();mudou()};
+  $("trocarImg").onclick=function(){$("pImgArquivo").click()};
+  $("pImgArquivo").onchange=async function(e){
+    var f=(e.target.files||[])[0]; e.target.value=""; if(!f) return;
+    var bt=$("trocarImg"); bt.disabled=true; bt.textContent="Enviando…";
+    try{
+      var b=await A.reduzir(f,900,0.9); if(!b) throw new Error("Não deu para abrir essa imagem.");
+      var url=await A.enviarBlob(b,"topo",f.name,{senha:senha});
+      imgPropria=url; rascunho.imagem=url; preencher(); mudou();
+    }catch(err){ A.toast(err.message||"Não deu para enviar a imagem.") }
+    bt.disabled=false; bt.textContent="Enviar outra imagem";
+  };
+  $("descartar").onclick=function(){rascunho=JSON.parse(JSON.stringify(salvo));preencher();mudou()};
+  $("salvar").onclick=async function(){
+    $("salvar").disabled=true; $("painelAviso").textContent="Salvando…";
+    try{
+      var d=await A.api("/api/config",{metodo:"PUT",senha:senha,corpo:rascunho});
+      salvo=d.config; rascunho=JSON.parse(JSON.stringify(salvo)); preencher(); mudou(); A.toast("Salvo. O álbum atualiza em alguns segundos.");
+    }catch(err){ $("salvar").disabled=false; $("painelAviso").textContent=err.message; if(err.status===401) setTimeout(function(){$("sair").click()},1500) }
+  };
+  addEventListener("beforeunload",function(e){ if(rascunho&&salvo&&JSON.stringify(rascunho)!==JSON.stringify(salvo)){ e.preventDefault(); e.returnValue="" } });
+
+  /* ---------- moderação ---------- */
+  function moderacao(){
+    var box=$("mods"); box.textContent="";
+    $("modInfo").textContent=itens.length?"Edite a legenda e toque fora do campo para salvar, ou apague o que não deve ficar no álbum.":"Nenhuma foto ou vídeo enviado ainda.";
+    itens.forEach(function(it){
+      var row=document.createElement("div"); row.className="mod";
+      var a=document.createElement("a"); a.href=it.url; a.target="_blank"; a.rel="noopener";
+      var im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=""; im.src=it.miniatura||(it.tipo==="foto"?it.url:"/chocalho.png"); a.appendChild(im);
+      var info=document.createElement("div"); info.className="info";
+      var inp=document.createElement("input"); inp.value=it.legenda||""; inp.maxLength=120; inp.placeholder="Sem legenda"; inp.setAttribute("aria-label","Legenda");
+      inp.addEventListener("change",async function(){
+        try{ await A.api("/api/midia",{metodo:"PATCH",senha:senha,corpo:{id:it.id,legenda:inp.value.trim()}}); it.legenda=inp.value.trim(); A.toast("Legenda salva") }
+        catch(err){ A.toast(err.message) }
+      });
+      var sm=document.createElement("small"); sm.textContent=(it.autor||"Convidado")+" · "+A.quando(it.criadoEm)+" · "+A.mb(it.bytes||0);
+      info.append(inp,sm);
+      var lado=document.createElement("div"); lado.className="lado";
+      var bd=document.createElement("span"); bd.className="badge"; bd.textContent=it.tipo==="video"?"Vídeo":"Foto";
+      var del=document.createElement("button"); del.type="button"; del.className="del"; del.textContent="Apagar";
+      del.onclick=function(){
+        if(del.dataset.conf){ apagar(it,del) } else { del.dataset.conf="1"; del.textContent="Confirmar"; setTimeout(function(){if(del.isConnected){delete del.dataset.conf;del.textContent="Apagar"}},4000) }
+      };
+      lado.append(bd,del);
+      row.append(a,info,lado); box.appendChild(row);
+    });
+  }
+  async function apagar(it,btn){
+    btn.disabled=true; btn.textContent="Apagando…";
+    try{ await A.api("/api/midia",{metodo:"DELETE",senha:senha,corpo:{id:it.id}}); itens=itens.filter(function(x){return x.id!==it.id}); bytes=Math.max(0,bytes-(it.bytes||0)); moderacao(); espaco(); A.toast("Apagado") }
+    catch(err){ btn.disabled=false; btn.textContent="Apagar"; A.toast(err.message) }
+  }
+
+  if(senha){ entrar(senha).catch(function(){ try{sessionStorage.removeItem("album_admin")}catch(e){} senha="" }) }
+})();
+</script>
+</body>
+</html>
