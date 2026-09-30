@@ -11,7 +11,8 @@ export async function redis(...comandos) {
     method: "POST",
     headers: { Authorization: "Bearer " + REDIS_TOKEN, "Content-Type": "application/json" },
     body: JSON.stringify(comandos),
-  });
+    signal: AbortSignal.timeout(10000),
+  }).catch(() => { throw new ErroApp(504, "O banco de dados demorou para responder. Tente de novo."); });
   if (!r.ok) throw new ErroApp(502, "Falha ao falar com o banco de dados.");
   const res = await r.json();
   return res.map((x) => {

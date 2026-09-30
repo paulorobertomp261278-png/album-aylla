@@ -4,8 +4,7 @@ import { json, lerConfig, senhaConfere } from "./_lib.js";
 
 const TIPOS = ["image/jpeg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm", "video/quicktime"];
 
-export default async function handler(request) {
-  if (request.method !== "POST") return json({ erro: "Método não permitido" }, 405);
+export async function POST(request) {
   let body;
   try { body = await request.json(); } catch { return json({ erro: "Pedido inválido" }, 400); }
 

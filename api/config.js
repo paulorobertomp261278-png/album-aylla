@@ -2,7 +2,7 @@
 import { del } from "@vercel/blob";
 import { rota, json, redis, ErroApp, exigirAdmin, limparConfig, lerConfig, urlDoBlob } from "./_lib.js";
 
-export default rota({
+const handler = rota({
   PUT: async (request) => {
     exigirAdmin(request);
     let b;
@@ -15,3 +15,5 @@ export default rota({
     return json({ ok: true, config: cfg });
   },
 });
+
+export const PUT = handler;

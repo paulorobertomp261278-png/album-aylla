@@ -1,7 +1,7 @@
 // Confere a senha do painel admin
 import { rota, json, ErroApp, senhaConfere } from "./_lib.js";
 
-export default rota({
+const handler = rota({
   POST: async (request) => {
     if (!process.env.ADMIN_SENHA) throw new ErroApp(500, "Defina a variável ADMIN_SENHA na Vercel.");
     let b = {};
@@ -11,3 +11,5 @@ export default rota({
     return json({ ok: true });
   },
 });
+
+export const POST = handler;

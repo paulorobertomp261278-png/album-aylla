@@ -1,7 +1,7 @@
 // Tudo o que a página precisa: configuração + fotos/vídeos. Responde só "igual" se nada mudou.
 import { rota, json, redis, limparConfig } from "./_lib.js";
 
-export default rota({
+const handler = rota({
   GET: async (request) => {
     const v = new URL(request.url).searchParams.get("v");
     const [versao] = await redis(["GET", "versao"]);
@@ -24,3 +24,5 @@ export default rota({
     });
   },
 });
+
+export const GET = handler;

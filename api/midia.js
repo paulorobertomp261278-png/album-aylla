@@ -17,7 +17,7 @@ function podeMexer(request, item, chave) {
   return !!chave && item.dono === hashChave(chave);
 }
 
-export default rota({
+const handler = rota({
   // novo item, depois que o arquivo já foi enviado ao Blob
   POST: async (request) => {
     const b = await corpo(request);
@@ -70,3 +70,7 @@ export default rota({
     return json({ ok: true });
   },
 });
+
+export const POST = handler;
+export const PATCH = handler;
+export const DELETE = handler;

@@ -17,7 +17,10 @@
     opcoes = opcoes || {};
     var headers = { "Content-Type": "application/json" };
     if (opcoes.senha) headers["x-admin-senha"] = opcoes.senha;
-    var r = await fetch(caminho, { method: opcoes.metodo || "GET", headers: headers, body: opcoes.corpo ? JSON.stringify(opcoes.corpo) : undefined, cache: "no-store" });
+    var ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 25000), r;
+    try { r = await fetch(caminho, { method: opcoes.metodo || "GET", headers: headers, body: opcoes.corpo ? JSON.stringify(opcoes.corpo) : undefined, cache: "no-store", signal: ctl.signal }); }
+    catch (e) { throw new Error("O servidor não respondeu. Verifique a internet e tente de novo."); }
+    finally { clearTimeout(t); }
     var d = {}; try { d = await r.json(); } catch (e) {}
     if (!r.ok) { var err = new Error(d.erro || "Algo deu errado. Tente de novo."); err.status = r.status; throw err; }
     return d;
@@ -36,14 +39,24 @@
     if (!window.enviarParaBlob) throw new Error("O envio ainda está carregando. Recarregue a página.");
     var ext = (blob.type.split("/")[1] || "bin").replace("quicktime", "mov").replace("jpeg", "jpg");
     var limpo = String(nome || "arquivo").toLowerCase().replace(/\.[^.]+$/, "").replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "arquivo";
+    // cancela se ficar 45 s sem nenhum progresso
+    var ctl = new AbortController(), parado = null;
+    function vigiar() { clearTimeout(parado); parado = setTimeout(function () { ctl.abort(); }, 45000); }
+    vigiar();
+    try {
     var r = await window.enviarParaBlob(pasta + "/" + limpo + "." + ext, blob, {
+      abortSignal: ctl.signal,
       access: "public",
       handleUploadUrl: "/api/upload",
       clientPayload: JSON.stringify(payload || {}),
       contentType: blob.type,
       multipart: blob.size > 100 * 1024 * 1024,
-      onUploadProgress: progresso ? function (e) { progresso(Math.round(e.percentage || 0)); } : undefined,
+      onUploadProgress: function (e) { vigiar(); if (progresso) progresso(Math.round(e.percentage || 0)); },
     });
+    } catch (e) {
+      if (ctl.signal.aborted) throw new Error("O envio travou. Verifique a internet e toque em Tentar de novo.");
+      throw e;
+    } finally { clearTimeout(parado); }
     return r.url;
   };
 
