@@ -65,6 +65,42 @@ Pronto! Mande para os convidados só o link do álbum, **nunca o `/admin`**.
 
 ---
 
+## Usar o Cloudflare R2 (10 GB grátis, visualização sem limite)
+
+Quando as 5 variáveis `R2_*` existem na Vercel, o álbum passa a guardar as fotos novas no Cloudflare R2. As fotos que já estavam no Vercel Blob continuam funcionando.
+
+1. Crie uma conta em https://dash.cloudflare.com e abra **R2 Object Storage**. Ative o R2 (a Cloudflare pode pedir um cartão, mesmo no plano grátis).
+2. **Create bucket** → nome `album-aylla` → criar.
+3. No bucket, abra **Settings**:
+   - **Public Development URL** → **Enable** → copie o endereço `https://pub-....r2.dev`.
+   - **CORS Policy** → **Add CORS policy** → cole:
+     ```json
+     [
+       {
+         "AllowedOrigins": ["https://album-aylla.vercel.app"],
+         "AllowedMethods": ["PUT", "GET", "HEAD"],
+         "AllowedHeaders": ["content-type"],
+         "MaxAgeSeconds": 3600
+       }
+     ]
+     ```
+4. Volte em **R2 Object Storage** → **Manage API tokens** (ou "API Tokens") → **Create API token** (Account API token):
+   - Permissão: **Object Read & Write**
+   - Bucket: **album-aylla**
+   - Crie e copie o **Access Key ID** e o **Secret Access Key** (o segredo só aparece uma vez).
+5. O **Account ID** aparece na página do R2 (ou no endereço `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`).
+6. Na Vercel, em **Settings → Environment Variables**, crie:
+
+   | Nome | Valor |
+   |---|---|
+   | `R2_ACCOUNT_ID` | o Account ID |
+   | `R2_ACCESS_KEY_ID` | o Access Key ID |
+   | `R2_SECRET_ACCESS_KEY` | o Secret Access Key |
+   | `R2_BUCKET` | `album-aylla` |
+   | `R2_PUBLIC_URL` | o endereço `https://pub-....r2.dev` |
+
+7. **Deployments → ⋯ → Redeploy** e abra `/api/diagnostico`: deve aparecer `ok (Cloudflare R2, 10 GB grátis)`.
+
 ## Limites do plano gratuito da Vercel
 
 Se passar de qualquer um destes limites, a Vercel **bloqueia o armazenamento por 30 dias**. Você não é cobrado, mas as fotos param de aparecer.

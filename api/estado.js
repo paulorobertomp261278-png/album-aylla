@@ -1,5 +1,6 @@
 // Tudo o que a página precisa: configuração + fotos/vídeos. Responde só "igual" se nada mudou.
 import { rota, json, redis, limparConfig } from "./_lib.js";
+import { r2Config } from "./_r2.js";
 
 const handler = rota({
   GET: async (request) => {
@@ -21,6 +22,8 @@ const handler = rota({
       precisaCodigo: !!process.env.CODIGO_FESTA,
       itens,
       bytes: Number(bytes || 0),
+      armazenamento: r2Config() ? "cloudflare" : "vercel",
+      limiteBytes: r2Config() ? 10 * 1024 ** 3 : 1024 ** 3,
     });
   },
 });

@@ -35,7 +35,25 @@
   };
 
   /* ---------- envio ao Vercel Blob ---------- */
+  // envio direto ao Cloudflare R2 com endereço assinado pelo servidor
+  function enviarR2(urlEnvio, blob, progresso) {
+    return new Promise(function (resolve, reject) {
+      var x = new XMLHttpRequest(), parado = null;
+      function vigiar() { clearTimeout(parado); parado = setTimeout(function () { x.abort(); }, 45000); }
+      x.open("PUT", urlEnvio);
+      x.setRequestHeader("Content-Type", blob.type);
+      x.upload.onprogress = function (e) { vigiar(); if (progresso && e.lengthComputable) progresso(Math.round(e.loaded / e.total * 100)); };
+      x.onload = function () { clearTimeout(parado); if (x.status >= 200 && x.status < 300) resolve(); else reject(new Error("O Cloudflare recusou o arquivo (código " + x.status + "). Avise quem criou o álbum.")); };
+      x.onerror = function () { clearTimeout(parado); reject(new Error("Não deu para enviar ao Cloudflare. Verifique a internet. Se continuar, avise quem criou o álbum (pode faltar a configuração de CORS).")); };
+      x.onabort = function () { reject(new Error("O envio travou. Verifique a internet e toque em Tentar de novo.")); };
+      vigiar(); x.send(blob);
+    });
+  }
+
   A.enviarBlob = async function (blob, pasta, nome, payload, progresso) {
+    payload = payload || {};
+    var dest = await A.api("/api/assinar", { metodo: "POST", corpo: { pasta: pasta, nome: nome, tipo: blob.type, tamanho: blob.size, codigo: payload.codigo, senha: payload.senha } });
+    if (dest.modo === "r2") { await enviarR2(dest.urlEnvio, blob, progresso); return dest.urlPublica; }
     if (!window.enviarParaBlob) throw new Error("O envio ainda está carregando. Recarregue a página.");
     var ext = (blob.type.split("/")[1] || "bin").replace("quicktime", "mov").replace("jpeg", "jpg");
     var limpo = String(nome || "arquivo").toLowerCase().replace(/\.[^.]+$/, "").replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "arquivo";

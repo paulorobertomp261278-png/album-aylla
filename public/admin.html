@@ -107,7 +107,7 @@
         <div class="medidor"><span id="espacoBarra"></span></div>
         <small id="espacoTxt">Calculando…</small>
       </div>
-      <p class="nota">O plano gratuito da Vercel inclui 1 GB de armazenamento e 10 GB de visualização por mês.</p>
+      <p class="nota" id="notaEspaco">Com o Cloudflare R2: 10 GB grátis e visualização sem limite. Com o Vercel Blob: 1 GB e 10 GB de visualização por mês.</p>
     </fieldset>
 
     <fieldset class="grupo"><legend>Fotos e vídeos</legend>
@@ -125,7 +125,7 @@
 (function(){
   var A=window.Album, $=A.$;
   var CORES_ORIG={corPrincipal:"#d9467e",corBalao1:"#f78fb3",corBalao2:"#ffe08a"};
-  var senha="", salvo=null, rascunho=null, itens=[], imgPropria="", bytes=0;
+  var senha="", salvo=null, rascunho=null, itens=[], imgPropria="", bytes=0, limite=0, armazenamento="";
   try{ senha=sessionStorage.getItem("album_admin")||"" }catch(e){}
 
   /* ---------- login ---------- */
@@ -145,14 +145,14 @@
   /* ---------- dados ---------- */
   async function carregar(){
     var d=await A.api("/api/estado");
-    salvo=d.config; itens=d.itens||[]; bytes=d.bytes||0;
+    salvo=d.config; itens=d.itens||[]; bytes=d.bytes||0; limite=d.limiteBytes||0; armazenamento=d.armazenamento||"";
     if(!rascunho) rascunho=JSON.parse(JSON.stringify(salvo));
     preencher(); mudou(); espaco(); moderacao();
   }
   function espaco(){
-    var max=1073741824, pct=Math.round(bytes/max*100);
+    var max=limite||1073741824, pct=Math.round(bytes/max*100);
     $("espacoBarra").style.width=Math.min(100,pct)+"%";
-    $("espacoTxt").textContent=A.mb(bytes)+" de 1 GB ("+pct+"%) · "+itens.length+(itens.length===1?" item":" itens");
+    $("espacoTxt").textContent=A.mb(bytes)+" de "+Math.round(max/1073741824)+" GB ("+pct+"%) · "+(armazenamento==="cloudflare"?"Cloudflare R2 · ":"Vercel Blob · ")+itens.length+(itens.length===1?" item":" itens");
   }
 
   /* ---------- formulário ---------- */

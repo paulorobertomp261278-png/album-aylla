@@ -119,10 +119,29 @@ export async function lerConfig() {
 }
 
 // só aceita arquivos do próprio armazenamento Blob público
+// aceita arquivos do Cloudflare R2 (se configurado) ou do Vercel Blob público
 export function urlDoBlob(u) {
   if (typeof u !== "string" || u.length > 600) return false;
+  const r2 = (process.env.R2_PUBLIC_URL || "").trim().replace(/\/+$/, "");
+  if (r2 && u.startsWith(r2 + "/")) return true;
   try {
     const url = new URL(u);
     return url.protocol === "https:" && url.hostname.endsWith(".public.blob.vercel-storage.com");
   } catch { return false; }
+}
+
+// apaga arquivos, cada um no armazenamento de onde veio
+export async function apagarArquivos(urls) {
+  const { r2Config, apagarR2 } = await import("./_r2.js");
+  const cfg = r2Config();
+  const doR2 = cfg ? urls.filter((u) => u.startsWith(cfg.publica + "/")) : [];
+  const doBlob = urls.filter((u) => !doR2.includes(u) && /\.public\.blob\.vercel-storage\.com\//.test(u));
+  if (doR2.length) await apagarR2(cfg, doR2);
+  if (doBlob.length) {
+    try {
+      const { del } = await import("@vercel/blob");
+      const t = tokenBlob();
+      await del(doBlob, t ? { token: t } : undefined);
+    } catch (e) { console.error("del blob", e); }
+  }
 }
