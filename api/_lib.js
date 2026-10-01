@@ -91,7 +91,7 @@ export const PADRAO = {
   textoEncerrado: "O envio de fotos e vídeos foi encerrado. Obrigado a todos que participaram!",
   corPrincipal: "", corBalao1: "", corBalao2: "",
   imagem: "padrao",
-  confete: true, baloes: true, numero: true, lacos: true, bandeirinhas: true,
+  confete: true, baloes: true, numero: true, lacos: true, bandeirinhas: true, bebe: true,
   envioAberto: true, mostrarAutor: true, ordem: "novas",
 };
 

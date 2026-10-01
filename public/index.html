@@ -23,10 +23,34 @@
     <path d="M32 20 C42 4 60 2 61 12 C62 22 56 36 32 20Z" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
     <rect x="26" y="13" width="12" height="14" rx="5" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2"/>
   </symbol>
+  <symbol id="chupeta" viewBox="0 0 48 48">
+    <circle cx="24" cy="10" r="7" fill="none" stroke="var(--ink)" stroke-width="2.2"/>
+    <path d="M24 34 Q18 46 24 46 Q30 46 24 34Z" fill="var(--sun)" stroke="var(--ink)" stroke-width="2"/>
+    <ellipse cx="24" cy="26" rx="15" ry="9" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2.2"/>
+    <circle cx="24" cy="26" r="4" fill="#fff" stroke="var(--ink)" stroke-width="2"/>
+  </symbol>
+  <symbol id="mamadeira" viewBox="0 0 48 48">
+    <path d="M20 11 Q24 0 28 11Z" fill="var(--sun)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="15" y="10" width="18" height="7" rx="2.5" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="14" y="17" width="20" height="28" rx="7" fill="#fff" stroke="var(--ink)" stroke-width="2"/>
+    <path d="M15 31 H33 V38 Q33 44 27 44 H21 Q15 44 15 38Z" fill="var(--mint)"/>
+    <path d="M14 24 h5 M14 29 h4" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M24 39 l-3 -3 a2 2 0 0 1 3 -2.6 a2 2 0 0 1 3 2.6z" fill="var(--accent)"/>
+  </symbol>
+  <symbol id="sapatinho" viewBox="0 0 48 48">
+    <path d="M7 30 C7 21 13 17 19 19 L25 23 C31 25 40 25 42 31 C44 38 38 40 30 40 L12 40 C9 40 7 36 7 30Z" fill="var(--coral)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M17 19 Q22 27 30 26" fill="none" stroke="var(--ink)" stroke-width="2"/>
+    <path d="M8 34 H43" stroke="#fff" stroke-width="2.2" stroke-dasharray="1 4" stroke-linecap="round"/>
+    <circle cx="27" cy="22" r="3.4" fill="#fff" stroke="var(--ink)" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="coracao" viewBox="0 0 48 48">
+    <path d="M24 42 L8 26 A9.5 9.5 0 0 1 24 13 A9.5 9.5 0 0 1 40 26Z" fill="url(#bolinhas)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+  </symbol>
 </svg>
 <canvas id="confete" aria-hidden="true"></canvas>
 <div class="wrap">
   <div class="flags" aria-hidden="true" id="flags"></div>
+  <div class="renda" aria-hidden="true" id="renda"></div>
 
   <header class="hero">
     <div class="hero-txt">
@@ -50,9 +74,21 @@
         <ellipse cx="22" cy="24" rx="5" ry="8" fill="#fff" opacity=".45"/><ellipse cx="76" cy="20" rx="5" ry="8" fill="#fff" opacity=".45"/><ellipse cx="50" cy="34" rx="5" ry="8" fill="#fff" opacity=".45"/>
       </svg>
       <span class="um" id="numero">1</span>
+      <svg class="laco-num" id="lacoNum"><use href="#laco"/></svg>
       <img class="hero-img" id="heroImg" src="chocalho.png" alt="" width="360" height="498">
     </div>
   </header>
+
+  <div class="varal" id="varal" aria-hidden="true">
+    <svg class="fio" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 2 Q50 22 100 2" fill="none" stroke="var(--muted)" stroke-width=".6" vector-effect="non-scaling-stroke"/></svg>
+    <span class="pend"><i></i><svg><use href="#chupeta"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#laco"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#mamadeira"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#coracao"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#sapatinho"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#laco"/></svg></span>
+    <span class="pend"><i></i><svg><use href="#chupeta"/></svg></span>
+  </div>
 
   <section id="envio">
     <div class="drop" id="drop">
@@ -86,10 +122,16 @@
 
   <div class="wall" id="mural"></div>
   <div class="empty" id="vazio">
-    <div class="lacos" id="lacosVazio" aria-hidden="true"><svg class="laco"><use href="#laco"/></svg><svg class="laco"><use href="#laco"/></svg><svg class="laco"><use href="#laco"/></svg></div>
+    <div class="lacos" id="lacosVazio" aria-hidden="true"><svg class="item-bebe"><use href="#mamadeira"/></svg><svg class="laco"><use href="#laco"/></svg><svg class="item-bebe"><use href="#chupeta"/></svg></div>
     <div class="big" id="vazioTitulo">O mural está esperando!</div>
     <p id="vazioTxt">As fotos e vídeos que os convidados enviarem aparecem aqui, das mais novas para as mais antigas.</p>
   </div>
+
+  <footer class="rodape">
+    <svg class="mini" aria-hidden="true"><use href="#coracao"/></svg>
+    <span id="rodapeTxt">Feito com carinho para a Aylla</span>
+    <svg class="mini" aria-hidden="true"><use href="#coracao"/></svg>
+  </footer>
 </div>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto ampliada">
@@ -166,6 +208,9 @@
     $("flags").hidden=!c.bandeirinhas;
     $("lacoMural").style.display=c.lacos?"":"none";
     $("lacosVazio").hidden=!c.lacos;
+    $("varal").hidden=!c.bebe; $("lacoNum").style.display=(c.bebe&&!$("numero").hidden)?"":"none";
+    $("renda").hidden=!c.bebe;
+    $("rodapeTxt").textContent="Feito com carinho para "+(c.nome.trim()?("a "+c.nome.trim()):"a aniversariante");
     $("envio").hidden=!c.envioAberto;
     $("encerrado").hidden=c.envioAberto;
     $("inCodigo").hidden=!precisaCodigo;
