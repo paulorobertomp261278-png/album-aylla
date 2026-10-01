@@ -5,7 +5,7 @@ export async function GET() {
   const r = envRedis();
   const out = {
     senhaAdmin: process.env.ADMIN_SENHA ? "ok" : "FALTANDO: crie a variável ADMIN_SENHA",
-    armazenamentoFotos: tokenBlob() ? "ok" : "FALTANDO: crie um Blob (Public) em Storage e conecte ao projeto, depois faça Redeploy",
+    armazenamentoFotos: (tokenBlob() || process.env.BLOB_STORE_ID) ? "ok" : "FALTANDO: crie um Blob (Public) em Storage e conecte ao projeto, depois faça Redeploy",
     bancoDeDados: "",
     variaveisEncontradas: Object.keys(process.env).filter((k) => /KV|REDIS|UPSTASH|BLOB/i.test(k)).sort(),
   };

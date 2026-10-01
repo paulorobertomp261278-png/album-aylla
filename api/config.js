@@ -11,7 +11,7 @@ const handler = rota({
     const cfg = limparConfig(b);
     await redis(["SET", "config", JSON.stringify(cfg)], ["INCR", "versao"]);
     // se a imagem do topo foi trocada, apaga a antiga
-    if (urlDoBlob(antes.imagem) && antes.imagem !== cfg.imagem) { try { await del(antes.imagem, { token: tokenBlob() }); } catch {} }
+    if (urlDoBlob(antes.imagem) && antes.imagem !== cfg.imagem) { try { await del(antes.imagem, tokenBlob() ? { token: tokenBlob() } : undefined); } catch {} }
     return json({ ok: true, config: cfg });
   },
 });

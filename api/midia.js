@@ -65,7 +65,7 @@ const handler = rota({
     const item = await buscar(b.id);
     if (!podeMexer(request, item, b.chave)) throw new ErroApp(403, "Você só pode apagar o que você enviou.");
     const urls = [item.url, item.miniatura].filter(urlDoBlob);
-    try { if (urls.length) await del(urls, { token: tokenBlob() }); } catch (e) { console.error("del", e); }
+    try { if (urls.length) await del(urls, tokenBlob() ? { token: tokenBlob() } : undefined); } catch (e) { console.error("del", e); }
     await redis(["HDEL", "midia", item.id], ["DECRBY", "bytes", item.bytes || 0], ["INCR", "versao"]);
     return json({ ok: true });
   },
