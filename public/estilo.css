@@ -1,19 +1,14 @@
 /* Layout: mesa de festa — cabeçalho com bandeirinhas, área de envio tipo "caixa de fotos", mural de polaroides em colunas */
 :root{
-  --bg:#fff0f5; --dot:#ffffff; --paper:#ffffff; --ink:#4a1f33; --muted:#94617a; --line:#f6d3e1;
-  --coral:#f78fb3; --sun:#ffe08a; --mint:#fbc4d8; --sky:#e86a9a; --accent:#d9467e; --accent-ink:#ffffff;
-  --shadow:0 1px 2px rgba(59,34,48,.08),0 6px 18px rgba(59,34,48,.08);
+  /* rosa e branco sempre, mesmo com o celular no modo escuro */
+  --bg:#fff0f6; --dot:#ffffff; --paper:#ffffff; --ink:#5a1f3a; --muted:#a0607e; --line:#f8d2e2;
+  --coral:#f78fb3; --sun:#ffd3e4; --mint:#fbc4d8; --sky:#e86a9a; --accent:#e0508a; --accent-ink:#ffffff;
+  --shadow:0 1px 2px rgba(224,80,138,.10),0 8px 20px rgba(224,80,138,.12);
   --display:"Bagel Fat One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
   --body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#25131c; --dot:#321a26; --paper:#321f29; --ink:#fdeaf2; --muted:#d3a4ba; --line:#4a2d3b;
-  --coral:#f78fb3; --sun:#f5d57a; --mint:#8a4a66; --sky:#ff8fbb; --accent:#ff7aac; --accent-ink:#2a0c19;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#25131c; --dot:#321a26; --paper:#321f29; --ink:#fdeaf2; --muted:#d3a4ba; --line:#4a2d3b;
-  --coral:#f78fb3; --sun:#f5d57a; --mint:#8a4a66; --sky:#ff8fbb; --accent:#ff7aac; --accent-ink:#2a0c19;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}
+html,body{background-color:var(--bg)}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -79,7 +74,7 @@ h1 .age{color:var(--accent)}
 .bar h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0}
 .tabs{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px}
 .tabs button{border:0;background:none;border-radius:999px;padding:6px 14px;font-weight:700;color:var(--muted)}
-.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 
 /* mural */
 .wall{columns:4 230px;column-gap:18px;margin-top:18px}

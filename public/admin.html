@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light">
 <title>Painel do Álbum</title>
 <link rel="icon" href="/chocalho.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +72,7 @@
       <div class="cores">
         <label class="cor" for="pCor1">Principal<input id="pCor1" type="color" data-k="corPrincipal"></label>
         <label class="cor" for="pCor2">Balão rosa<input id="pCor2" type="color" data-k="corBalao1"></label>
-        <label class="cor" for="pCor3">Balão amarelo<input id="pCor3" type="color" data-k="corBalao2"></label>
+        <label class="cor" for="pCor3">Balão rosa-claro<input id="pCor3" type="color" data-k="corBalao2"></label>
       </div>
       <button class="btn ghost sm" type="button" id="corPadrao">Voltar às cores originais</button>
     </fieldset>
@@ -124,7 +125,7 @@
 <script>
 (function(){
   var A=window.Album, $=A.$;
-  var CORES_ORIG={corPrincipal:"#d9467e",corBalao1:"#f78fb3",corBalao2:"#ffe08a"};
+  var CORES_ORIG={corPrincipal:"#e0508a",corBalao1:"#f78fb3",corBalao2:"#ffd3e4"};
   var senha="", salvo=null, rascunho=null, itens=[], imgPropria="", bytes=0, limite=0, armazenamento="";
   try{ senha=sessionStorage.getItem("album_admin")||"" }catch(e){}
 
